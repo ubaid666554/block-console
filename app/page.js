@@ -344,7 +344,76 @@ export default function Console() {
   }, [mapApiKey]);
 
   if (loading) {
-    return <main className="shell"><p>Reading block state…</p></main>;
+    // A skeleton of the real layout rather than a line of text: the free tier
+    // sleeps, so this can sit on screen for several seconds and needs to look
+    // like the page arriving, not like nothing happening.
+    return (
+      <main className="shell">
+        <header className="masthead">
+          <h1>Block A</h1>
+          <div className="masthead-end">
+            <span className="sub">Slot occupancy and dispatch record</span>
+            <Link href="/mine" className="navlink">
+              SD time →
+            </Link>
+          </div>
+        </header>
+
+        <div className="columns">
+          <section>
+            <div className="readout">
+              <span className="figure skel-text" aria-hidden="true">
+                00
+              </span>
+              <span className="of">
+                slots free
+                <br />
+                of 24
+              </span>
+            </div>
+
+            <div className="gauge">
+              <span className="skel-sweep" style={{ width: '100%' }} />
+            </div>
+            <div className="gauge-key">
+              <span className="skel-text" aria-hidden="true">
+                00 held
+              </span>
+              <span className="skel-text" aria-hidden="true">
+                00 free
+              </span>
+            </div>
+
+            <div className="grid" aria-hidden="true">
+              {Array.from({ length: 24 }, (_, i) => (
+                <div
+                  key={i}
+                  className="cell skel-cell"
+                  style={{ animationDelay: `${(i % 6) * 60 + Math.floor(i / 6) * 40}ms` }}
+                />
+              ))}
+            </div>
+
+            <p className="loading-note" role="status">
+              Reading block state. The database sleeps when idle, so the first
+              read after a quiet spell can take a few seconds.
+            </p>
+          </section>
+
+          <aside>
+            <div className="panel">
+              <h2>Dispatch</h2>
+              <div className="skel-block" aria-hidden="true" />
+              <div className="skel-block short" aria-hidden="true" />
+            </div>
+            <div className="panel">
+              <h2>Load slots</h2>
+              <div className="skel-block short" aria-hidden="true" />
+            </div>
+          </aside>
+        </div>
+      </main>
+    );
   }
 
   if (state?.error) {
@@ -353,6 +422,23 @@ export default function Console() {
         <div className="setup">
           <h1>Database not reachable</h1>
           <p>{state.error}</p>
+          <p className="hint">
+            A sleeping database usually wakes on the second attempt.
+          </p>
+          <button
+            className="action"
+            onClick={() => {
+              setLoading(true);
+              refresh();
+            }}
+          >
+            Try again
+          </button>
+          <p className="setup-aside">
+            <Link href="/mine" className="backlink">
+              SD time →
+            </Link>
+          </p>
         </div>
       </main>
     );

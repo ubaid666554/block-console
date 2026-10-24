@@ -1035,3 +1035,87 @@ button.action.danger-action:hover:not(:disabled) {
   border-color: var(--signal-deep);
   color: #fff;
 }
+
+/* ======================================================= loading state */
+
+/* Placeholders breathe rather than sweep: a shimmer gradient has to repaint a
+   large area continuously, and this sits on screen for whole seconds. */
+@keyframes breathe {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.22; }
+}
+
+.skel-cell {
+  border-color: var(--rule-faint);
+  background: var(--rule-faint);
+  animation: breathe 1.6s ease-in-out infinite;
+}
+
+/* Text kept in the markup for correct sizing, then hidden behind a bar so the
+   layout does not shift when real values replace it. */
+.skel-text {
+  position: relative;
+  color: transparent;
+}
+
+.skel-text::after {
+  content: '';
+  position: absolute;
+  inset: 0.18em 0;
+  background: var(--rule-faint);
+  animation: breathe 1.6s ease-in-out infinite;
+}
+
+.gauge span.skel-sweep {
+  background: var(--rule-faint);
+  animation: breathe 1.6s ease-in-out infinite;
+}
+
+.skel-block {
+  height: 132px;
+  margin-bottom: 10px;
+  background: var(--rule-faint);
+  animation: breathe 1.6s ease-in-out infinite;
+}
+
+.skel-block.short {
+  height: 64px;
+}
+
+.loading-note {
+  margin-top: 20px;
+  max-width: 46ch;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skel-cell,
+  .skel-text::after,
+  .gauge span.skel-sweep,
+  .skel-block {
+    animation: none;
+    opacity: 0.4;
+  }
+}
+
+.setup h1 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.setup .hint {
+  margin: 10px 0 0;
+}
+
+.setup button.action {
+  margin-top: 16px;
+}
+
+.setup-aside {
+  margin: 22px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule-faint);
+  font-size: 13px;
+}
