@@ -410,7 +410,7 @@ export default function Console() {
             Slot occupancy and dispatch record · updated live
           </span>
           <Link href="/mine" className="navlink">
-            Pressure mine →
+            SD time →
           </Link>
         </div>
       </header>

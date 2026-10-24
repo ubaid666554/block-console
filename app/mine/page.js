@@ -113,7 +113,7 @@ export default function Mine() {
   return (
     <main className="shell mine-shell">
       <header className="masthead">
-        <h1>Pressure mine</h1>
+        <h1>SD time</h1>
         <Link href="/" className="backlink">
           ← Block console
         </Link>
