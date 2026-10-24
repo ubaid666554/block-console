@@ -44,6 +44,28 @@ export default function Mine() {
     [record]
   );
 
+  // Push the deadline out while the mine is still live. The window length grows
+  // with it so the dial still reads as a fraction of the whole armed period.
+  const extend = useCallback(
+    (seconds) => {
+      if (deadlineRef.current === null) return;
+      deadlineRef.current += seconds * 1000;
+      setWindowLength((w) => w + seconds);
+      setRemaining(Math.max(0, deadlineRef.current - Date.now()) / 1000);
+      record(`Extended by ${seconds}s.`, 'arm');
+    },
+    [record]
+  );
+
+  // Operator stands the mine down before the window runs out.
+  const disengage = useCallback(() => {
+    const left = Math.max(0, deadlineRef.current - Date.now()) / 1000;
+    deadlineRef.current = null;
+    setRemaining(0);
+    setPhase(SAFE);
+    record(`Disengaged manually with ${left.toFixed(1)}s left.`, 'safe');
+  }, [record]);
+
   useEffect(() => {
     if (phase !== ARMED) return undefined;
 
@@ -137,9 +159,9 @@ export default function Mine() {
 
           <p className="prompt" role="status">
             {phase === IDLE && 'Arm the mine to begin. Once armed, stepping on it within the window detonates it.'}
-            {phase === ARMED && 'Live. Step on it now and it detonates — wait it out and it disengages.'}
+            {phase === ARMED && 'Live. Step on it and it detonates. Add time, disengage it, or wait the window out.'}
             {phase === BLOWN && 'It detonated. Reset to lay a fresh mine.'}
-            {phase === SAFE && 'The window elapsed, so it disengaged. Stepping on it now does nothing.'}
+            {phase === SAFE && 'The mine is disengaged. Stepping on it now does nothing.'}
           </p>
         </section>
 
@@ -168,12 +190,25 @@ export default function Mine() {
                 <button type="button" className="action danger-action" onClick={step}>
                   Step on it
                 </button>
+
+                <p className="hint">Add time to the live window:</p>
+                <div className="choice-row">
+                  {RE_ARM_CHOICES.map((s) => (
+                    <button key={s} type="button" className="choice" onClick={() => extend(s)}>
+                      +{s}s
+                    </button>
+                  ))}
+                </div>
+
+                <button type="button" className="action quiet" onClick={disengage}>
+                  Disengage now
+                </button>
               </>
             )}
 
             {phase === SAFE && (
               <>
-                <p className="hint">Disengaged. Arm it again for longer:</p>
+                <p className="hint">Disengaged and safe. Arm it again:</p>
                 <div className="choice-row">
                   {RE_ARM_CHOICES.map((s) => (
                     <button key={s} type="button" className="choice" onClick={() => arm(s)}>

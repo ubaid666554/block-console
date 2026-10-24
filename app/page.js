@@ -3,13 +3,7 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const operators = [
-  'Aisha Khan',
-  'Bilal Ahmed',
-  'Hassan Raza',
-  'Sara Malik',
-  'Usman Tariq',
-];
+const operators = ['Alpha', 'Bravo', 'Charlie'];
 
 export default function Console() {
   const [state, setState] = useState(null);
